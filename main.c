@@ -11,7 +11,6 @@ Implement the following user interface:
 • When not streaming, LEDs must be OFF.
   ******************************************************************************
 //prova per ludo
-
 */
 
 /*********** Includes  ****************/
