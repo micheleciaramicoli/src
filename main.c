@@ -10,6 +10,7 @@ Implement the following user interface:
 • The following commands should be supported: ‘s’: start/stop streaming ‘d’: toggles data streaming or result streaming
 • When not streaming, LEDs must be OFF.
   ******************************************************************************
+//prova per ludo
 */
 
 /*********** Includes  ****************/
