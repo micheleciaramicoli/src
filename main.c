@@ -1,10 +1,12 @@
-/**
+/*
   ******************************************************************************
-  * @file    main.c
-  * @author  Bojan Milosevic
-  * @version V1.0
-  * @date    16-May-2017
-  * @brief   Acc + USART printf example
+Write a program that performs the following: • Samples the accelerometer at 100Hz •
+• •
+Implements a Low Pass FIR filter to filter each accelerometer axis at 5Hz Implements the computation of planar orientation from filtered accelerometer data Implements the computation of the mean on orientation data on 5 samples window
+• Using the mean on orientation data, turns on only the LED oriented to the ground. Others must be off.
+Implement the following user interface: • At startup initialize everything, turn on green LED (for USB it is already turned on when a cable is connected) and wait for user input
+• The following commands should be supported: ‘s’: start/stop streaming ‘d’: toggles data streaming or result streaming
+• When not streaming, LEDs must be OFF.
   ******************************************************************************
 */
 
