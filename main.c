@@ -23,7 +23,7 @@ Implement the following user interface:
 #include "math_helper.h"
 #include "noarm_cmsis.h"
 
-
+int x = 0;
 
 /*********** Defines   ****************/
 #define STREAM_PERIOD_MS 1000
