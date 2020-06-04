@@ -9,6 +9,13 @@ Implement the following user interface:
 • At startup initialize everything, turn on green LED (for USB it is already turned on when a cable is connected) and wait for user input
 • The following commands should be supported: ‘s’: start/stop streaming ‘d’: toggles data streaming or result streaming
 • When not streaming, LEDs must be OFF.
+
+Data streaming:
+• send accelerometer data (in g or mg) at 5Hz.
+• Sample format: X: 0000 Y: 0000 Z: 0000 (you can also stream only numbers in csv)
+Result streaming:
+• Send computed mean on orientation data (in degrees) at 20Hz.
+• Sample format: roll: 0000 pitch: 0000 (you can also stream only numbers in csv)
   ******************************************************************************
 
 */
