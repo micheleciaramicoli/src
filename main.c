@@ -122,6 +122,8 @@ int main(void)
 	float32_t  *inputF32, *outputF32;
 	float32_t  snr;
 
+	int16_t accData[3] = {0, 0, 0};
+
 	float yn = 0;
 	int result[2] = {0,0};
 
@@ -145,6 +147,7 @@ int main(void)
 	/* Capture error */
 		while(1);
 	}
+
 
 	STM_EVAL_LEDOn(LED4);
 
@@ -172,6 +175,11 @@ int main(void)
 		{
 			if (dataReady == 1)
 			{
+//USARE QUESTO PER TEMPORIZZARE ACCELLEROMETRO, DATA READY DEVE ANDARE AD 1 OGNI 100 MS
+//OPPURE SPOSTARE TUTTA QUESTA PARTE ALL'INTERNO DELL IRQ DI UN TIMER
+//				LIS3DSH_ReadACC(accData);
+//				printf("X: %4d\tY: %4d\tZ: %4d\r\n", accData[0], accData[1], accData[2]);
+
 				// NO CMSIS
 			    yn = 0;
 			    i = 0;
@@ -221,8 +229,67 @@ int main(void)
 
 }
 
+/*********** IRQ Handlers   ****************/
+//SETTA UN FLAG PER IL MAIN CHE DECIDE L'AZIONE A SECODA DELLA LETTERE IMMESSA
+void USART2_IRQHandler(void)
+{
+	/* RX interrupt */
+	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
+	{
+		chRX = USART_ReceiveData(USART2);
+		dataReceived = 1;
 
+
+	}
+}
+
+void SysTick_Handler(void)
+{
+	static int counterStream_ms = 0;
+	static int counterLed_ms = 0;
+
+	if (streamActive == 1)
+	{
+		counterStream_ms++;
+		counterLed_ms++;
+
+		if (counterStream_ms >= STREAM_PERIOD_MS)
+		{
+			dataReady = 1;
+			counterStream_ms = 0;
+		}
+
+		if (counterLed_ms >= LED_PERIOD_MS)
+		{
+			STM_EVAL_LEDToggle(LED6);
+			counterLed_ms = 0;
+		}
+
+	}
+
+}
 /*********** Functions   ****************/
+void Acc_Config(void)
+{
+	LIS3DSH_InitTypeDef AccInitStruct;
+
+	AccInitStruct.Output_DataRate = LIS3DSH_DATARATE_400; //Data Output Rate possibilmnete pìù alta della frequenza di sampling desiderata = 400hz
+	AccInitStruct.Axes_Enable = LIS3DSH_XYZ_ENABLE;
+	AccInitStruct.SPI_Wire = LIS3DSH_SERIALINTERFACE_4WIRE; //sceglo la spi full duplez come interfaccia di comunicazione
+	AccInitStruct.Self_Test = LIS3DSH_SELFTEST_NORMAL;
+	AccInitStruct.Full_Scale = LIS3DSH_FULLSCALE_2; //imposto la scala massima e minima a +/- 2g
+	AccInitStruct.Filter_BW = LIS3DSH_FILTER_BW_800; // filtro passa batto interno
+
+	LIS3DSH_Init(&AccInitStruct);
+	/*This function will call the SPI initialization function and then write the
+	selected configuration to the LIS3DSH registers.
+	ovvero LIS3DSH_LowLevel_Init(); contenuta nella libreria in dicovery_lis3dsh.c
+	questa ci permette di non dover configuarre tutti i registri di controllo e di dati a mano
+	CONFIGURA E ATTIVA L'SPI attivando dapprima i pin per mosi miso sck e poi inizializzando una struttura di cntrollo come ne abbiamo già viste
+	configura inoltre il CS usando un GPIO*/
+
+}
+
 
 void USART_Config(void)
 {
@@ -286,52 +353,6 @@ void USART_Config(void)
 	USART_Cmd(USART2, ENABLE);
 
 }
-
-
-
-/*********** IRQ Handlers   ****************/
-
-void SysTick_Handler(void)
-{
-	static int counterStream_ms = 0;
-	static int counterLed_ms = 0;
-
-	if (streamActive == 1)
-	{
-		counterStream_ms++;
-		counterLed_ms++;
-
-		if (counterStream_ms >= STREAM_PERIOD_MS)
-		{
-			dataReady = 1;
-			counterStream_ms = 0;
-		}
-
-		if (counterLed_ms >= LED_PERIOD_MS)
-		{
-			STM_EVAL_LEDToggle(LED6);
-			counterLed_ms = 0;
-		}
-
-	}
-
-}
-
-
-
-
-void USART2_IRQHandler(void)
-{
-	/* RX interrupt */
-	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
-	{
-		chRX = USART_ReceiveData(USART2);
-		dataReceived = 1;
-
-
-	}
-}
-
 
 
 /*********** printf define   ****************/
