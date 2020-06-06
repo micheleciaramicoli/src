@@ -109,7 +109,7 @@ volatile unsigned int *SCB_DEMCR = (volatile unsigned int *) 0xE000EDFC;
 int main(void) {
 
 	arm_fir_instance_f32 S;
-s	float bufferX[MAX_LENGHT] = { 0 };
+	float bufferX[MAX_LENGHT] = { 0 };
 	float bufferY[MAX_LENGHT] = { 0 };
 	float bufferZ[MAX_LENGHT] = { 0 };
 	float bufferOutX[MAX_LENGHT] = { 0 }; //valori di x in uscita dal filtro FIR
